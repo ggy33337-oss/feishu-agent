@@ -1,0 +1,12 @@
+skills:
+  - name: excel
+    enabled: true
+  - name: ppt
+    enabled: true
+  - name: copywriter
+    enabled: true
+  - name: image
+    enabled: true
+  - name: search
+    enabled: true
+
