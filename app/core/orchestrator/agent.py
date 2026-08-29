@@ -19,6 +19,11 @@ class Agent:
 
     async def run(self, task: StructuredTask) -> SkillResult:
         available_skills = self.executor.registry.available_names()
+        if "feishu_lark_agent" in available_skills:
+            available_skills = [
+                "feishu_lark_agent",
+                *[name for name in available_skills if name != "feishu_lark_agent"],
+            ]
 
         decision = await self.llm.select_skill(task, available_skills)
         if decision.mode == "direct":

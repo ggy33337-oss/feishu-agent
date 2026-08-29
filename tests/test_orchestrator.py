@@ -17,6 +17,7 @@ class DirectStubLLM:
 
 class ToolStubLLM:
     async def select_skill(self, task: StructuredTask, available_skills: list[str]) -> RouteDecision:
+        assert available_skills[0] == "feishu_lark_agent"
         return RouteDecision(
             mode="tool",
             skill_name="search",
