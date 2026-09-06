@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
-  <rect width="960" height="360" fill="#fff7ed"/>
-  <rect x="40" y="40" width="880" height="280" rx="12" fill="#ffffff" stroke="#e4b378" stroke-width="2"/>
-  <text x="480" y="150" text-anchor="middle" font-family="Arial" font-size="28" fill="#8b572a">Replace with admin page or log screenshot</text>
-  <text x="480" y="200" text-anchor="middle" font-family="Arial" font-size="18" fill="#94775b">docs/images/03-admin-or-log.png</text>
-</svg>

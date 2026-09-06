@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
-  <rect width="960" height="360" fill="#f7f3ff"/>
-  <rect x="40" y="40" width="880" height="280" rx="12" fill="#ffffff" stroke="#b4a2dd" stroke-width="2"/>
-  <text x="480" y="150" text-anchor="middle" font-family="Arial" font-size="28" fill="#584481">Replace with architecture diagram</text>
-  <text x="480" y="200" text-anchor="middle" font-family="Arial" font-size="18" fill="#7d7198">docs/images/04-architecture.png</text>
-</svg>
