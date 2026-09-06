@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Any
 
 
@@ -7,4 +8,3 @@ class ImageExecutor:
             "prompt": inputs.get("text", ""),
             "status": "queued",
         }
-

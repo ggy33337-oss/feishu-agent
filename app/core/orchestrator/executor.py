@@ -1,5 +1,13 @@
-from app.core.parser.schemas import Plan, SkillResult
+# -*- coding: utf-8 -*-
+from app.domain.contracts import Plan, SkillResult
 from app.skills.registry import SkillRegistry
+from app.core.orchestrator.stages import PipelineStage
+from app.services.timing import timed_stage
+
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 class Executor:
@@ -8,5 +16,14 @@ class Executor:
 
     async def execute(self, plan: Plan) -> SkillResult:
         skill = self.registry.get(plan.skill_name)
-        return await skill.run(plan.inputs)
-
+        async with timed_stage(
+            logger,
+            f"{PipelineStage.TOOL}.{plan.skill_name}",
+            job_id=str(plan.inputs.get("job_id") or "") or None,
+            fields={
+                "task_id": plan.task_id,
+                "step_id": plan.step_id,
+                "skill_name": plan.skill_name,
+            },
+        ):
+            return await skill.run(plan.inputs)

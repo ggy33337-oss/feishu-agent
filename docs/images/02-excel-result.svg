@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360">
+  <rect width="960" height="360" fill="#f2f8f2"/>
+  <rect x="40" y="40" width="880" height="280" rx="12" fill="#ffffff" stroke="#9bc89b" stroke-width="2"/>
+  <text x="480" y="150" text-anchor="middle" font-family="Arial" font-size="28" fill="#2d6538">Replace with Excel result screenshot</text>
+  <text x="480" y="200" text-anchor="middle" font-family="Arial" font-size="18" fill="#66806a">docs/images/02-excel-result.png</text>
+</svg>

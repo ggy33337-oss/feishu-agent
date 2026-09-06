@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>入群欢迎设置</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, "Microsoft YaHei", Arial, sans-serif;
+      color: #202124;
+      background: #f7f8fa;
+      letter-spacing: 0;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-width: 320px; }
+    button, input, textarea { font: inherit; letter-spacing: 0; }
+    button { cursor: pointer; }
+    .topbar { background: #ffffff; border-bottom: 1px solid #e3e6eb; }
+    .topbar-inner, main { width: min(760px, calc(100% - 32px)); margin: 0 auto; }
+    .topbar-inner {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    h1 { margin: 0; font-size: 20px; font-weight: 650; }
+    main { padding: 28px 0 48px; }
+    section { padding: 0 0 24px; }
+    .section-head {
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+    h2 { margin: 0; font-size: 16px; font-weight: 650; }
+    textarea {
+      width: 100%;
+      min-height: 132px;
+      resize: vertical;
+      padding: 12px 14px;
+      color: #202124;
+      background: #ffffff;
+      border: 1px solid #cfd4dc;
+      border-radius: 6px;
+      outline: none;
+      line-height: 1.6;
+    }
+    textarea:focus { border-color: #2f6feb; box-shadow: 0 0 0 3px rgba(47,111,235,.12); }
+    .credential {
+      width: min(360px, 100%);
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid #cfd4dc;
+      border-radius: 6px;
+    }
+    .preview {
+      margin-top: 14px;
+      padding: 13px 14px;
+      border-left: 3px solid #2563d9;
+      background: #ffffff;
+      color: #4c5561;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+    .mention { color: #2563d9; }
+    .actions { display: flex; justify-content: flex-end; margin-top: 14px; }
+    .button {
+      min-height: 36px;
+      padding: 0 15px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #2563d9;
+      border-radius: 6px;
+      color: #ffffff;
+      background: #2563d9;
+    }
+    .button:hover { background: #1e52b5; }
+    .button:disabled { cursor: not-allowed; opacity: .55; }
+    .switch { position: relative; width: 42px; height: 24px; flex: 0 0 auto; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch span {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: #aeb4bd;
+      transition: background .16s ease;
+    }
+    .switch span::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: #ffffff;
+      transition: transform .16s ease;
+    }
+    .switch input:checked + span { background: #24875d; }
+    .switch input:checked + span::before { transform: translateX(18px); }
+    .global-toggle { display: flex; align-items: center; gap: 9px; color: #4c5561; font-size: 14px; }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      transform: translateX(-50%);
+      min-width: 220px;
+      max-width: calc(100% - 32px);
+      padding: 11px 14px;
+      border-radius: 6px;
+      color: #ffffff;
+      background: #26313f;
+      box-shadow: 0 8px 24px rgba(0,0,0,.18);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .16s ease;
+    }
+    .toast.show { opacity: 1; }
+    .toast.error { background: #9f251c; }
+    @media (max-width: 640px) {
+      .topbar-inner, main { width: min(100% - 24px, 760px); }
+      .topbar-inner { min-height: 62px; }
+      main { padding-top: 22px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1>入群欢迎设置</h1>
+      <div class="global-toggle">
+        <span>自动发送</span>
+        <label class="switch" aria-label="启用群内欢迎消息">
+          <input id="enabled" type="checkbox">
+          <span></span>
+        </label>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <div class="section-head"><h2>管理凭证</h2></div>
+      <input id="admin-key" class="credential" type="password" autocomplete="current-password" aria-label="管理凭证">
+    </section>
+    <section>
+      <div class="section-head"><h2>群内提示文案</h2></div>
+      <textarea id="message" maxlength="1000" aria-label="群内提示文案"></textarea>
+      <div class="preview"><span class="mention">@新成员</span> <span id="preview-message"></span></div>
+      <div class="actions">
+        <button id="save" class="button" type="button">保存设置</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script>
+    const enabled = document.getElementById('enabled');
+    const adminKey = document.getElementById('admin-key');
+    const message = document.getElementById('message');
+    const previewMessage = document.getElementById('preview-message');
+    const saveButton = document.getElementById('save');
+    const toast = document.getElementById('toast');
+    let toastTimer;
+
+    function notify(text, isError = false) {
+      clearTimeout(toastTimer);
+      toast.textContent = text;
+      toast.className = `toast show${isError ? ' error' : ''}`;
+      toastTimer = setTimeout(() => { toast.className = 'toast'; }, 2400);
+    }
+
+    async function request(url, options = {}) {
+      const headers = new Headers(options.headers || {});
+      if (adminKey.value.trim()) headers.set('X-Admin-Key', adminKey.value.trim());
+      options.headers = headers;
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.detail || '操作失败');
+      }
+      return response.json();
+    }
+
+    function updatePreview() {
+      previewMessage.textContent = message.value.trim();
+    }
+
+    async function load() {
+      try {
+        adminKey.value = sessionStorage.getItem('welcome-admin-key') || '';
+        const data = await request('/api/welcome');
+        enabled.checked = data.enabled;
+        message.value = data.message;
+        updatePreview();
+      } catch (error) {
+        notify(error.message, true);
+      }
+    }
+
+    async function saveSettings() {
+      if (!message.value.trim()) {
+        notify('提示文案不能为空', true);
+        message.focus();
+        return;
+      }
+      saveButton.disabled = true;
+      try {
+        sessionStorage.setItem('welcome-admin-key', adminKey.value.trim());
+        await request('/api/welcome', {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({enabled: enabled.checked, message: message.value.trim()})
+        });
+        notify('设置已保存');
+      } catch (error) {
+        notify(error.message, true);
+      } finally {
+        saveButton.disabled = false;
+      }
+    }
+
+    message.addEventListener('input', updatePreview);
+    saveButton.addEventListener('click', saveSettings);
+    enabled.addEventListener('change', saveSettings);
+    adminKey.addEventListener('change', load);
+    load();
+  </script>
+</body>
+</html>

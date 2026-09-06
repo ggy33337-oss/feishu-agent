@@ -1,15 +1,12 @@
-from fastapi import APIRouter, HTTPException
-
-from app.core.orchestrator.agent import Agent
-from app.core.parser.task_parser import TaskParser
-from app.services.feishu import FeishuService
+# -*- coding: utf-8 -*-
+from fastapi import APIRouter, Request, Response, status
 
 router = APIRouter(prefix="/feishu", tags=["feishu"])
 
 
 @router.post("/webhook")
-async def receive_message(payload: dict) -> dict:
-    """Receive a Feishu event callback and dispatch it to the agent."""
+async def receive_message(payload: dict, request: Request, response: Response) -> dict:
+    """Persist an event and acknowledge it before slow AI work begins."""
     if "challenge" in payload:
         return {"challenge": payload["challenge"]}
 
@@ -17,17 +14,12 @@ async def receive_message(payload: dict) -> dict:
     if header and header.get("event_type") != "im.message.receive_v1":
         return {"ok": True, "ignored": header.get("event_type")}
 
-    try:
-        parser = TaskParser()
-        agent = Agent()
-        feishu = FeishuService()
-
-        task = await parser.parse(payload)
-        result = await agent.run(task)
-
-        if task.message_id:
-            await feishu.reply(task.message_id, result.message)
-
-        return {"ok": True, "task_id": task.task_id, "result": result.model_dump()}
-    except ValueError as exc:
-        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    job_id, accepted = await request.app.state.runtime.enqueue_message(payload)
+    response.status_code = status.HTTP_202_ACCEPTED
+    return {
+        "ok": True,
+        "accepted": accepted,
+        "duplicate": not accepted,
+        "job_id": job_id,
+        "status": "pending" if accepted else "already_queued",
+    }

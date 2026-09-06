@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from typing import Any
 
 
@@ -7,4 +8,3 @@ class PptExecutor:
             "outline": ["封面", "核心观点", "数据支撑", "结论"],
             "requested_text": inputs.get("text", ""),
         }
-

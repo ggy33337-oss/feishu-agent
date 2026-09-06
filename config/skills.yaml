@@ -1,12 +1,16 @@
 skills:
-  - name: excel
+  - module: app.skills.excel.skill
+    class: ExcelSkill
     enabled: true
-  - name: ppt
+  - module: app.skills.ppt.skill
+    class: PptSkill
     enabled: true
-  - name: copywriter
+  - module: app.skills.copywriter.skill
+    class: CopywriterSkill
     enabled: true
-  - name: image
+  - module: app.skills.image.skill
+    class: ImageSkill
     enabled: true
-  - name: search
+  - module: app.skills.search.skill
+    class: SearchSkill
     enabled: true
-
